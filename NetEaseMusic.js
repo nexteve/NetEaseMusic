@@ -61,6 +61,8 @@ NetEaseMusic.artistAlbums =  (id,offset,limit)=> {
 /**
  * 根据歌曲id获取歌曲评论
  *  @param {number} id 歌曲id
+ *  @param {number} limit 返回条数
+ *  @param {number} offset 分页偏移量
  */
 NetEaseMusic.comments =  (id,offset,limit)=> {
     let option = (0, deepClone)(config.option);
@@ -355,14 +357,14 @@ NetEaseMusic.newAlbum =  (offset,limit)=> {
     return promise;
 }
 /**根据id获取歌词
- *  @param {number} id 歌单id
+ *  @param {number} id 歌曲id
  */
-NetEaseMusic.lrc =  (id,lv)=> {
+NetEaseMusic.lrc =  (id)=> {
     //var lv = arguments.length <= 2 || arguments[2] === undefined ? -1 : arguments[2];
     var option = (0, deepClone)(config.option);
     var method = 'GET';
     Object.assign(option, {
-        url: config.origin+'/api/song/lyric?id='+id+'&lv='+lv,
+        url: config.origin+'/api/song/lyric?id='+id+'&lv=-1',
         method: method
     });
     let promise = new Promise((resolve,reject)=> {
@@ -581,11 +583,11 @@ NetEaseMusic.delComment =  (songId,commentId)=> {
     return promise;
 }
 /**关注用户
- *  @param {number} userId 用户id
+ *  @param {number} uid 用户id
  */
-NetEaseMusic.follow = (userId)=> {
+NetEaseMusic.follow = (uid)=> {
     let textObj = {
-        uid: userId,
+        uid: uid,
         csrf_token:"218bb2bac935e2a4e21ef89b59632c96"
     }
 
@@ -600,7 +602,7 @@ NetEaseMusic.follow = (userId)=> {
     let option = (0, deepClone)(config.option);
     let method = 'post';
     Object.assign(option, {
-        url: `http://music.163.com/weapi/user/follow/${userId}`,
+        url: `http://music.163.com/weapi/user/follow/${uid}`,
         form: {
             params: passObj.encText,
             encSecKey: passObj.encSecKey
@@ -619,11 +621,11 @@ NetEaseMusic.follow = (userId)=> {
     return promise;
 }
 /**取消关注
- *  @param {number} userId 用户id
+ *  @param {number} uid 用户id
  */
-NetEaseMusic.delFollow =  (userId)=> {
+NetEaseMusic.delFollow =  (uid)=> {
     let textObj = {
-        followId:userId,
+        followId:uid,
         csrf_token:"218bb2bac935e2a4e21ef89b59632c96"
     }
 
@@ -638,7 +640,7 @@ NetEaseMusic.delFollow =  (userId)=> {
     let option = (0, deepClone)(config.option);
     let method = 'POST';
     Object.assign(option, {
-        url: 'http://music.163.com/weapi/user/delfollow/'+userId,
+        url: 'http://music.163.com/weapi/user/delfollow/'+uid,
         form: {
             params: passObj.encText,
             encSecKey: passObj.encSecKey
@@ -698,13 +700,15 @@ NetEaseMusic.getEvent = (offset,limit)=> {
     return promise;
 }
 /**获取关注的人
- *  @param {number} id 用户id
+ *  @param {number} uid 用户id
+ *  @param {number} limit 请求条数
+ *  @param {number} offset 分页偏移量
  */
-NetEaseMusic.getFollows = (id,offset,limit)=> {
+NetEaseMusic.getFollows = (uid,offset,limit)=> {
     let option = (0, deepClone)(config.option);
     let method = 'GET';
     Object.assign(option, {
-        url: config.origin+'/api/user/getfollows/'+id+'?offset ='+ (offset||0) +'&limit='+ (limit||100) +'&order=true',
+        url: config.origin+'/api/user/getfollows/'+uid+'?offset ='+ (offset||0) +'&limit='+ (limit||100) +'&order=true',
         method: method
     });
     let promise = new Promise((resolve,reject)=> {
@@ -719,16 +723,16 @@ NetEaseMusic.getFollows = (id,offset,limit)=> {
     return promise;
 }
 /**获取粉丝列表
- *  @param {number} userId 用户id
+ *  @param {number} uid 用户id
  *  @param {number} limit 请求条数
- *  @param {number} offset 起始标记
+ *  @param {number} offset 分页偏移量
  */
-NetEaseMusic.getFans = (userId,offset,limit)=> {
+NetEaseMusic.getFans = (uid,offset,limit)=> {
     let textObj = {
         limit:limit||100,
         offset:offset||0,
         total:true,
-        userId:userId,
+        userId:uid,
         csrf_token:"218bb2bac935e2a4e21ef89b59632c96"
     }
 
